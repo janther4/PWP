@@ -1,0 +1,13 @@
+# Ignore project wiki folder
+PWP.wiki/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+build/
+dist/
+
+# SQLite database file
+app.db
