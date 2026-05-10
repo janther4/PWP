@@ -11,3 +11,8 @@ dist/
 
 # SQLite database file
 app.db
+instance/
+*.db
+
+# MD files
+README.md
