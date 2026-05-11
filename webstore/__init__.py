@@ -1,6 +1,6 @@
 """Application factory for the webstore API."""
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -42,9 +42,14 @@ def create_app(test_config=None):
 
     @app.route("/")
     def index():
+        return redirect(url_for("client"))
+
+    @app.route("/api-info/")
+    def api_info():
         return {
             "name": "Webstore API",
             "api": "/api/",
+            "client": "/client/",
             "resources": {
                 "users": "/api/users/",
                 "products": "/api/products/",
@@ -53,6 +58,10 @@ def create_app(test_config=None):
                 "suppliers": "/api/suppliers/",
             },
         }
+
+    @app.route("/client/")
+    def client():
+        return redirect(url_for("static", filename="client/index.html"))
 
     @app.route(LINK_RELATIONS_URL)
     def send_link_relations():
