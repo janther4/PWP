@@ -45,4 +45,28 @@ Entry point: `http://127.0.0.1:5000/`
 API base: `http://127.0.0.1:5000/api/`
 Client UI: `http://127.0.0.1:5000/client/`
 
+## Run with Docker
+
+Build and start:
+
+```powershell
+docker compose up --build
+```
+
+Run in background:
+
+```powershell
+docker compose up --build -d
+```
+
+Stop:
+
+```powershell
+docker compose down
+```
+
+Notes:
+- App is available at `http://127.0.0.1:5000/`
+- Database file is persisted via `./instance -> /app/instance`
+
 
