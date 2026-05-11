@@ -49,6 +49,8 @@ def create_app(test_config=None):
                 "users": "/api/users/",
                 "products": "/api/products/",
                 "orders": "/api/orders/",
+                "categories": "/api/categories/",
+                "suppliers": "/api/suppliers/",
             },
         }
 
@@ -60,6 +62,8 @@ def create_app(test_config=None):
                 "user:add-user",
                 "product:add-product",
                 "order:add-order",
+                "category:add-category",
+                "supplier:add-supplier",
             ],
         }
 

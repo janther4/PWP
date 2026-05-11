@@ -18,7 +18,11 @@ class OrderCollection(Resource):
         body = StoreBuilder()
         body.add_common_namespace()
         body.add_control("self", href=url_for("api.ordercollection"))
+        body.add_control_all_users()
+        body.add_control_all_products()
         body.add_control_all_orders()
+        body.add_control_all_categories()
+        body.add_control_all_suppliers()
         body.add_control_add_order(Order.json_schema())
         body["orders"] = []
 

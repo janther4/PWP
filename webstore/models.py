@@ -44,7 +44,6 @@ class User(ModelAccessMixin, db.Model):
     orders = db.relationship("Order", back_populates="user", cascade="all, delete-orphan")
 
     def serialize(self):
-        """Return user data as a dictionary."""
         return {
             "id": self.id,
             "email": self.email,
@@ -53,18 +52,15 @@ class User(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
-        """Update user data from a dictionary."""
         self.email = data["email"]
         self.name = data["name"]
 
     @classmethod
     def find_by_email(cls, email):
-        """Return a user by email or None."""
         return cls.query.filter_by(email=email).first()
 
     @staticmethod
     def json_schema():
-        """JSON schema for user data."""
         return {
             "type": "object",
             "properties": {
@@ -97,7 +93,6 @@ class Product(ModelAccessMixin, db.Model):
     )
 
     def serialize(self):
-        """Return product data as a dictionary."""
         return {
             "id": self.id,
             "sku": self.sku,
@@ -109,7 +104,6 @@ class Product(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
-        """Update product data from a dictionary."""
         self.sku = data["sku"]
         self.product_name = data["product_name"]
         self.description = data.get("description")
@@ -118,12 +112,10 @@ class Product(ModelAccessMixin, db.Model):
 
     @classmethod
     def find_by_sku(cls, sku):
-        """Return a product by SKU or None."""
         return cls.query.filter_by(sku=sku).first()
 
     @staticmethod
     def json_schema():
-        """JSON schema for product data."""
         return {
             "type": "object",
             "properties": {
@@ -159,7 +151,6 @@ class Order(ModelAccessMixin, db.Model):
     )
 
     def serialize(self):
-        """Return order data as a dictionary."""
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -170,7 +161,6 @@ class Order(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
-        """Update order data from a dictionary."""
         self.user_id = data["user_id"]
         self.product_id = data["product_id"]
         self.quantity = data["quantity"]
@@ -178,7 +168,6 @@ class Order(ModelAccessMixin, db.Model):
 
     @staticmethod
     def json_schema(require_status=False):
-        """JSON schema for order data."""
         required = ["user_id", "product_id", "quantity"]
         if require_status:
             required.append("status")
@@ -196,6 +185,88 @@ class Order(ModelAccessMixin, db.Model):
         }
 
 
+class Supplier(ModelAccessMixin, db.Model):
+    """Supplier model."""
+
+    __tablename__ = "suppliers"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    email = db.Column(db.Text, nullable=True)
+    phone = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.Text, nullable=False, server_default=db.text("CURRENT_TIMESTAMP"))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "phone": self.phone,
+            "created_at": self.created_at,
+        }
+
+    def deserialize(self, data):
+        self.name = data["name"]
+        self.email = data.get("email")
+        self.phone = data.get("phone")
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
+
+    @staticmethod
+    def json_schema():
+        return {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "minLength": 1},
+                "email": {"type": ["string", "null"]},
+                "phone": {"type": ["string", "null"]},
+            },
+            "required": ["name"],
+            "additionalProperties": False,
+        }
+
+
+class Category(ModelAccessMixin, db.Model):
+    """Category model."""
+
+    __tablename__ = "categories"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.Text, nullable=False, server_default=db.text("CURRENT_TIMESTAMP"))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "created_at": self.created_at,
+        }
+
+    def deserialize(self, data):
+        self.name = data["name"]
+        self.description = data.get("description")
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
+
+    @staticmethod
+    def json_schema():
+        return {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "minLength": 1},
+                "description": {"type": ["string", "null"]},
+            },
+            "required": ["name"],
+            "additionalProperties": False,
+        }
+
+
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
@@ -205,7 +276,9 @@ def init_db_command():
 
 
 def populate_db():
-    """Populate the database with a small coherent sample dataset."""
+    """Populate the database with a coherent sample dataset."""
+    category = Category(name="Electronics", description="Electronic devices and accessories")
+    supplier = Supplier(name="Default Supplier", email="supplier@example.com", phone="+35840111222")
     user = User(email="customer@example.com", name="Example Customer")
     product = Product(
         sku="SKU-001",
@@ -215,8 +288,7 @@ def populate_db():
         stock_quantity=10,
     )
 
-    db.session.add(user)
-    db.session.add(product)
+    db.session.add_all([category, supplier, user, product])
     db.session.flush()
 
     order = Order(
@@ -226,7 +298,6 @@ def populate_db():
         status="placed",
     )
     product.stock_quantity -= order.quantity
-
     db.session.add(order)
     db.session.commit()
 

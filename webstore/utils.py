@@ -5,11 +5,13 @@ import json
 from flask import Response, request, url_for
 
 from webstore.constants import (
+    CATEGORY_PROFILE,
     ERROR_PROFILE,
     LINK_RELATIONS_URL,
     MASON,
     ORDER_PROFILE,
     PRODUCT_PROFILE,
+    SUPPLIER_PROFILE,
     USER_PROFILE,
 )
 
@@ -98,6 +100,24 @@ class StoreBuilder(MasonBuilder):
             title="Get all orders",
         )
 
+    def add_control_all_categories(self):
+        """Add a control for the category collection."""
+        self.add_control(
+            "store:get-categories",
+            url_for("api.categorycollection"),
+            method="GET",
+            title="Get all categories",
+        )
+
+    def add_control_all_suppliers(self):
+        """Add a control for the supplier collection."""
+        self.add_control(
+            "store:get-suppliers",
+            url_for("api.suppliercollection"),
+            method="GET",
+            title="Get all suppliers",
+        )
+
     def add_control_add_user(self, schema):
         """Add a control for creating a user."""
         self.add_control_post(
@@ -122,6 +142,24 @@ class StoreBuilder(MasonBuilder):
             "order:add-order",
             "Add a new order",
             url_for("api.ordercollection"),
+            schema,
+        )
+
+    def add_control_add_category(self, schema):
+        """Add a control for creating a category."""
+        self.add_control_post(
+            "category:add-category",
+            "Add a new category",
+            url_for("api.categorycollection"),
+            schema,
+        )
+
+    def add_control_add_supplier(self, schema):
+        """Add a control for creating a supplier."""
+        self.add_control_post(
+            "supplier:add-supplier",
+            "Add a new supplier",
+            url_for("api.suppliercollection"),
             schema,
         )
 
@@ -155,6 +193,36 @@ class StoreBuilder(MasonBuilder):
     def add_control_delete_order(self, order):
         """Add a control for deleting an order."""
         self.add_control_delete("Delete an order", url_for("api.orderitem", order_id=order.id))
+
+    def add_control_edit_category(self, category, schema):
+        """Add a control for editing a category."""
+        self.add_control_put(
+            "Edit a category",
+            url_for("api.categoryitem", category_id=category.id),
+            schema,
+        )
+
+    def add_control_delete_category(self, category):
+        """Add a control for deleting a category."""
+        self.add_control_delete(
+            "Delete a category",
+            url_for("api.categoryitem", category_id=category.id),
+        )
+
+    def add_control_edit_supplier(self, supplier, schema):
+        """Add a control for editing a supplier."""
+        self.add_control_put(
+            "Edit a supplier",
+            url_for("api.supplieritem", supplier_id=supplier.id),
+            schema,
+        )
+
+    def add_control_delete_supplier(self, supplier):
+        """Add a control for deleting a supplier."""
+        self.add_control_delete(
+            "Delete a supplier",
+            url_for("api.supplieritem", supplier_id=supplier.id),
+        )
 
     def add_control_user(self, user_id):
         """Add a control to a user item."""
@@ -199,5 +267,7 @@ def profile_for_resource(resource):
         "user": USER_PROFILE,
         "product": PRODUCT_PROFILE,
         "order": ORDER_PROFILE,
+        "category": CATEGORY_PROFILE,
+        "supplier": SUPPLIER_PROFILE,
     }
     return profiles[resource]
