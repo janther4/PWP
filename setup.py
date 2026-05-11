@@ -14,5 +14,6 @@ setup(
         "Flask-RESTful>=0.3.10",
         "Flask-SQLAlchemy>=3.1",
         "jsonschema>=4.0",
+        "requests>=2.28",
     ],
 )
