@@ -1,0 +1,66 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Webstore API",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for the Webstore API (users, products, orders, categories, suppliers)."
+  },
+  "servers": [
+    {"url": "/", "description": "Local server"}
+  ],
+  "paths": {
+    "/api/users/": {
+      "get": {
+        "summary": "List users",
+        "responses": {"200": {"description": "A list of users"}}
+      },
+      "post": {
+        "summary": "Create user",
+        "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}},
+        "responses": {"201": {"description": "Created"}, "400": {"description": "Bad Request"}, "409": {"description": "Conflict"}}
+      }
+    },
+    "/api/users/{user_id}/": {
+      "get": {"summary": "Get user", "parameters": [{"name":"user_id","in":"path","required":true,"schema":{"type":"integer"}}], "responses":{"200":{"description":"User"},"404":{"description":"Not found"}}},
+      "put": {"summary":"Replace user","parameters":[{"name":"user_id","in":"path","required":true,"schema":{"type":"integer"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/User"}}}},"responses":{"204":{"description":"Updated"},"400":{"description":"Bad request"},"409":{"description":"Conflict"}}},
+      "delete": {"summary":"Delete user","parameters":[{"name":"user_id","in":"path","required":true,"schema":{"type":"integer"}}],"responses":{"204":{"description":"Deleted"},"409":{"description":"Conflict"}}}
+    },
+    "/api/products/": {
+      "get": {"summary": "List products","responses": {"200": {"description": "A list of products"}}},
+      "post": {"summary":"Create product","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Product"}}}},"responses":{"201":{"description":"Created"},"400":{"description":"Bad Request"},"409":{"description":"Conflict"}}}
+    },
+    "/api/products/{product_id}/": {
+      "get": {"summary":"Get product","parameters":[{"name":"product_id","in":"path","required":true,"schema":{"type":"integer"}}],"responses":{"200":{"description":"Product"},"404":{"description":"Not found"}}},
+      "put": {"summary":"Replace product","parameters":[{"name":"product_id","in":"path","required":true,"schema":{"type":"integer"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Product"}}}},"responses":{"204":{"description":"Updated"},"400":{"description":"Bad request"},"409":{"description":"Conflict"}}},
+      "delete": {"summary":"Delete product","parameters":[{"name":"product_id","in":"path","required":true,"schema":{"type":"integer"}}],"responses":{"204":{"description":"Deleted"},"409":{"description":"Conflict"}}}
+    },
+    "/api/orders/": {
+      "get": {"summary":"List orders","responses":{"200":{"description":"A list of orders"}}},
+      "post": {"summary":"Create order","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Order"}}}},"responses":{"201":{"description":"Created"},"400":{"description":"Bad request"},"404":{"description":"Not found"},"409":{"description":"Conflict"}}}
+    },
+    "/api/orders/{order_id}/": {
+      "get": {"summary":"Get order","parameters":[{"name":"order_id","in":"path","required":true,"schema":{"type":"integer"}}],"responses":{"200":{"description":"Order"},"404":{"description":"Not found"}}},
+      "put": {"summary":"Replace order","parameters":[{"name":"order_id","in":"path","required":true,"schema":{"type":"integer"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Order"}}}},"responses":{"204":{"description":"Updated"},"400":{"description":"Bad request"},"404":{"description":"Not found"},"409":{"description":"Conflict"}}},
+      "delete": {"summary":"Delete order","parameters":[{"name":"order_id","in":"path","required":true,"schema":{"type":"integer"}}],"responses":{"204":{"description":"Deleted"}}}
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {"email": {"type": "string"}, "name": {"type": "string"}},
+        "required": ["email", "name"]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {"sku": {"type": "string"}, "product_name": {"type":"string"}, "description": {"type":"string"}, "price":{"type":"number"}, "stock_quantity":{"type":"integer"}},
+        "required": ["sku","product_name","price"]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {"user_id": {"type":"integer"}, "product_id": {"type":"integer"}, "quantity": {"type":"integer"}, "status": {"type":"string"}},
+        "required": ["user_id","product_id","quantity"]
+      }
+    }
+  }
+}
