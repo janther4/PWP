@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard | Webstore Admin{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<section class="cards">
+    <div class="card">
+        <p class="label">Products</p>
+        <p class="value">{{ product_count }}</p>
+    </div>
+    <div class="card">
+        <p class="label">Users</p>
+        <p class="value">{{ user_count }}</p>
+    </div>
+    <div class="card">
+        <p class="label">Orders</p>
+        <p class="value">{{ order_count }}</p>
+    </div>
+</section>
+{% endblock %}

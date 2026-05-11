@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Products | Webstore Admin{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <h2>Products</h2>
+    <a class="btn" href="{{ url_for('admin.create_product') }}">Add Product</a>
+</section>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.product_name }}</td>
+            <td>{{ "%.2f"|format(product.price) }}</td>
+            <td>{{ product.stock_quantity }}</td>
+            <td class="actions">
+                <a class="btn btn-small" href="{{ url_for('admin.edit_product', product_id=product.id) }}">Edit</a>
+                <form method="post" action="{{ url_for('admin.delete_product', product_id=product.id) }}">
+                    <button class="btn btn-danger btn-small" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="6">No products yet.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
