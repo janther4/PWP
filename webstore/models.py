@@ -1,4 +1,7 @@
-"""Database models for the webstore API."""
+"""Database models for the webstore API.
+
+    GitHub Copilot used for iterative development and docstrings.
+"""
 
 import click
 from flask.cli import with_appcontext
@@ -11,22 +14,37 @@ class ModelAccessMixin:
 
     @classmethod
     def get_all(cls):
-        """Return all rows ordered by primary key."""
+        """Fetch all rows from the database ordered by the primary key.
+
+        Returns a list of model instances.
+        """
         return cls.query.order_by(cls.id).all()
 
     @classmethod
     def get_by_id(cls, row_id):
-        """Return one row by primary key or None."""
+        """Retrieve a single row by its primary key.
+
+        Args:
+            row_id: The primary key (id) of the row.
+
+        Returns the model instance or None if not found.
+        """
         return db.session.get(cls, row_id)
 
     def save(self):
-        """Persist this model instance."""
+        """Persist the current model instance to the database.
+
+        Adds the instance to the session and commits the transaction.
+
+        Returns:
+            self: The saved instance.
+        """
         db.session.add(self)
         db.session.commit()
         return self
 
     def delete(self):
-        """Delete this model instance."""
+        """Delete the current model instance from the database and commit the change."""
         db.session.delete(self)
         db.session.commit()
 
@@ -44,6 +62,7 @@ class User(ModelAccessMixin, db.Model):
     orders = db.relationship("Order", back_populates="user", cascade="all, delete-orphan")
 
     def serialize(self):
+        """Return a dict representation of the user for JSON serialization."""
         return {
             "id": self.id,
             "email": self.email,
@@ -52,15 +71,25 @@ class User(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
+        """Populate the user instance from a dictionary.
+
+        Args:
+            data: A dict containing at least the keys 'email' and 'name'.
+        """
         self.email = data["email"]
         self.name = data["name"]
 
     @classmethod
     def find_by_email(cls, email):
+        """Find a user by email and return the first match or None."""
         return cls.query.filter_by(email=email).first()
 
     @staticmethod
     def json_schema():
+        """Return a JSON Schema describing the user for input validation.
+
+        Used by the API to validate request payloads.
+        """
         return {
             "type": "object",
             "properties": {
@@ -93,6 +122,7 @@ class Product(ModelAccessMixin, db.Model):
     )
 
     def serialize(self):
+        """Return a dict representation of the product for JSON serialization."""
         return {
             "id": self.id,
             "sku": self.sku,
@@ -104,6 +134,11 @@ class Product(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
+        """Populate the product fields from a dictionary.
+
+        Args:
+            data: A dict describing the product. Required keys: 'sku', 'product_name', 'price'.
+        """
         self.sku = data["sku"]
         self.product_name = data["product_name"]
         self.description = data.get("description")
@@ -112,10 +147,15 @@ class Product(ModelAccessMixin, db.Model):
 
     @classmethod
     def find_by_sku(cls, sku):
+        """Find a product by SKU and return the first match or None."""
         return cls.query.filter_by(sku=sku).first()
 
     @staticmethod
     def json_schema():
+        """Return a JSON Schema describing the product for input validation.
+
+        Includes types, minimums and required fields.
+        """
         return {
             "type": "object",
             "properties": {
@@ -151,6 +191,7 @@ class Order(ModelAccessMixin, db.Model):
     )
 
     def serialize(self):
+        """Return a dict representation of the order for JSON serialization."""
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -161,6 +202,11 @@ class Order(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
+        """Populate the order fields from a dictionary.
+
+        Args:
+            data: A dict containing at least 'user_id', 'product_id' and 'quantity'.
+        """
         self.user_id = data["user_id"]
         self.product_id = data["product_id"]
         self.quantity = data["quantity"]
@@ -168,6 +214,11 @@ class Order(ModelAccessMixin, db.Model):
 
     @staticmethod
     def json_schema(require_status=False):
+        """Return a JSON Schema describing the order for input validation.
+
+        Args:
+            require_status: If True, include 'status' in the required fields.
+        """
         required = ["user_id", "product_id", "quantity"]
         if require_status:
             required.append("status")
@@ -197,6 +248,7 @@ class Supplier(ModelAccessMixin, db.Model):
     created_at = db.Column(db.Text, nullable=False, server_default=db.text("CURRENT_TIMESTAMP"))
 
     def serialize(self):
+        """Return a dict representation of the supplier for JSON serialization."""
         return {
             "id": self.id,
             "name": self.name,
@@ -206,16 +258,23 @@ class Supplier(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
+        """Populate the supplier fields from a dictionary.
+
+        Args:
+            data: A dict that contains at least the key 'name'.
+        """
         self.name = data["name"]
         self.email = data.get("email")
         self.phone = data.get("phone")
 
     @classmethod
     def find_by_name(cls, name):
+        """Find a supplier by name and return the first match or None."""
         return cls.query.filter_by(name=name).first()
 
     @staticmethod
     def json_schema():
+        """Return a JSON Schema describing the supplier for input validation."""
         return {
             "type": "object",
             "properties": {
@@ -239,6 +298,7 @@ class Category(ModelAccessMixin, db.Model):
     created_at = db.Column(db.Text, nullable=False, server_default=db.text("CURRENT_TIMESTAMP"))
 
     def serialize(self):
+        """Return a dict representation of the category for JSON serialization."""
         return {
             "id": self.id,
             "name": self.name,
@@ -247,15 +307,22 @@ class Category(ModelAccessMixin, db.Model):
         }
 
     def deserialize(self, data):
+        """Populate the category fields from a dictionary.
+
+        Args:
+            data: A dict that contains at least the key 'name'.
+        """
         self.name = data["name"]
         self.description = data.get("description")
 
     @classmethod
     def find_by_name(cls, name):
+        """Find a category by name and return the first match or None."""
         return cls.query.filter_by(name=name).first()
 
     @staticmethod
     def json_schema():
+        """Palauttaa JSON Schema -kuvauksen kategorian validointiin."""
         return {
             "type": "object",
             "properties": {

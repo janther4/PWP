@@ -35,10 +35,12 @@ def create_app(test_config=None):
     db.init_app(app)
 
     from webstore import api, models
+    from webstore import swagger
 
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.seed_db_command)
     app.register_blueprint(api.api_bp)
+    app.register_blueprint(swagger.bp)
 
     @app.route("/")
     def index():
