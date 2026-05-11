@@ -4,7 +4,26 @@ services:
       context: .
     container_name: webstore-api
     ports:
-      - "127.0.0.1:5000:5000"
+      - "0.0.0.0:5000:5000"
     volumes:
       - ./instance:/app/instance
     restart: unless-stopped
+
+  auxiliary:
+    build:
+      context: .
+    container_name: webstore-aux
+    entrypoint: ["python", "auxiliary_service.py"]
+    environment:
+      WEBSTORE_API_BASE: http://webstore:5000
+    depends_on:
+      - webstore
+    ports:
+      - "0.0.0.0:5001:5001"
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"

@@ -45,28 +45,28 @@ Entry point: `http://127.0.0.1:5000/`
 API base: `http://127.0.0.1:5000/api/`
 Client UI: `http://127.0.0.1:5000/client/`
 
+## Auxiliary service:
+- `auxiliary_service.py` provides `GET /summary/` and reads data from the main REST API
+- Local URL: `http://127.0.0.1:5000/summary/`
+
 ## Run with Docker
 
-Build and start:
+### Build and start:
 
 ```powershell
 docker compose up --build
 ```
 
-Run in background:
+### Run in background:
 
 ```powershell
 docker compose up --build -d
 ```
 
-Stop:
+### Stop:
 
 ```powershell
 docker compose down
 ```
-
-Notes:
-- App is available at `http://127.0.0.1:5000/`
-- Database file is persisted via `./instance -> /app/instance`
 
 
