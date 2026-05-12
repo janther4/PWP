@@ -3,6 +3,7 @@ Example Qt client for the Webstore API.
 
 Made with GitHub Copilot GPT-5 mini using simple prompts and iterative development.
 """
+import os
 import sys
 import requests
 
@@ -22,7 +23,7 @@ except ImportError:
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.API_URL = "http://127.0.0.1:5000"
+        self.API_URL = os.getenv("WEBSTORE_API_URL", "http://127.0.0.1:5000").rstrip("/")
         self.setWindowTitle("Webstore Qt Client")
         self.resize(900, 600)
         # Subtle modern look: set a minimum size and style tweaks

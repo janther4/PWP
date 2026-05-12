@@ -40,7 +40,6 @@ flask --app webstore run
 python client.py
 ```
 
-
 Entry point: `http://127.0.0.1:5000/`  
 API base: `http://127.0.0.1:5000/api/`
 Client UI: `http://127.0.0.1:5000/client/`
